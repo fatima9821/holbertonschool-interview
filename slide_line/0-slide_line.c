@@ -3,7 +3,6 @@
 int slide_line(int *line, size_t size, int direction)
 {
 	size_t i, pos;
-	int temp;
 
 	if (!line || (direction != SLIDE_LEFT && direction != SLIDE_RIGHT))
 		return (0);
@@ -11,18 +10,12 @@ int slide_line(int *line, size_t size, int direction)
 	if (direction == SLIDE_LEFT)
 	{
 		pos = 0;
-		// Étape 1 : compacter vers la gauche
 		for (i = 0; i < size; i++)
-		{
 			if (line[i] != 0)
-			{
 				line[pos++] = line[i];
-			}
-		}
 		while (pos < size)
 			line[pos++] = 0;
 
-		// Étape 2 : fusion
 		for (i = 0; i < size - 1; i++)
 		{
 			if (line[i] != 0 && line[i] == line[i + 1])
@@ -32,13 +25,10 @@ int slide_line(int *line, size_t size, int direction)
 			}
 		}
 
-		// Étape 3 : compacter à nouveau
 		pos = 0;
 		for (i = 0; i < size; i++)
-		{
 			if (line[i] != 0)
 				line[pos++] = line[i];
-		}
 		while (pos < size)
 			line[pos++] = 0;
 	}
@@ -46,10 +36,8 @@ int slide_line(int *line, size_t size, int direction)
 	{
 		pos = size - 1;
 		for (i = size; i-- > 0;)
-		{
 			if (line[i] != 0)
 				line[pos--] = line[i];
-		}
 		while (pos < size)
 			line[pos--] = 0;
 
@@ -64,10 +52,8 @@ int slide_line(int *line, size_t size, int direction)
 
 		pos = size - 1;
 		for (i = size; i-- > 0;)
-		{
 			if (line[i] != 0)
 				line[pos--] = line[i];
-		}
 		while (pos < size)
 			line[pos--] = 0;
 	}
