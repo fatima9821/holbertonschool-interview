@@ -1,44 +1,55 @@
 #!/usr/bin/python3
-"""Solves the N queens problem"""
+"""N Queens"""
+
 import sys
 
 
-def is_safe(row, col, solution):
-    for r, c in solution:
-        if c == col or abs(row - r) == abs(col - c):
-            return False
-    return True
+if len(sys.argv) != 2:
+    print("Usage: nqueens N")
+    sys.exit(1)
+
+try:
+    N = int(sys.argv[1])
+except ValueError:
+    print("N must be a number")
+    sys.exit(1)
+
+if N < 4:
+    print("N must be at least 4")
+    sys.exit(1)
 
 
-def solve(row, n, solution, solutions):
-    if row == n:
-        solutions.append(solution[:])
-        return
-    for col in range(n):
-        if is_safe(row, col, solution):
-            solution.append([row, col])
-            solve(row + 1, n, solution, solutions)
-            solution.pop()
-
-
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: nqueens N")
-        sys.exit(1)
-    try:
-        n = int(sys.argv[1])
-    except ValueError:
-        print("N must be a number")
-        sys.exit(1)
-    if n < 4:
-        print("N must be at least 4")
-        sys.exit(1)
-
+def solve_nqueens(N):
+    """Liste for store solutions"""
     solutions = []
-    solve(0, n, [], solutions)
-    for sol in solutions:
-        print(sol)
+
+    def is_safe(board, row, col):
+        """check colonnes and diagonale"""
+        for i in range(row):
+            if board[i] == col or \
+               board[i] - i == col - row or \
+               board[i] + i == col + row:
+                return False
+        return True
+
+    def backtrack(board, row):
+        """Find all possible solutions"""
+        if row == N:
+            solutions.append(board[:])
+            return
+        for col in range(N):
+            if is_safe(board, row, col):
+                board[row] = col
+                backtrack(board, row + 1)
+                board[row] = -1
+
+    board = [-1] * N
+    backtrack(board, 0)
+
+    return solutions
 
 
-if __name__ == "__main__":
-    main()
+solutions = solve_nqueens(N)
+
+for solution in solutions:
+    print([[i, solution[i]] for i in range(N)])
