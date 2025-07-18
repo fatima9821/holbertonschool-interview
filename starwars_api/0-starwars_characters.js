@@ -1,5 +1,11 @@
-#!/usr/bin/node
-const https = require('https');
+#!/usr/bin/env node
+
+/**
+ * Script that prints all characters of a given Star Wars movie
+ * Usage: ./0-starwars_characters.js <movie_id>
+ */
+
+const request = require('request');
 
 const movieId = process.argv[2];
 if (!movieId) {
@@ -7,30 +13,26 @@ if (!movieId) {
   process.exit(1);
 }
 
-const filmUrl = `https://swapi-api.hbtn.io/api/films/${movieId}/`;
+const apiUrl = `https://swapi-api.alx-tools.com/api/films/${movieId}`;
 
-https.get(filmUrl, (res) => {
-  let data = '';
+request(apiUrl, (err, res, body) => {
+  if (err) return;
 
-  res.on('data', (chunk) => { data += chunk; });
-  res.on('end', async () => {
-    const film = JSON.parse(data);
-    const characters = film.characters;
+  const film = JSON.parse(body);
+  const characters = film.characters;
 
-    for (const url of characters) {
-      await new Promise((resolve) => {
-        https.get(url, (res) => {
-          let characterData = '';
-          res.on('data', (chunk) => { characterData += chunk; });
-          res.on('end', () => {
-            const character = JSON.parse(characterData);
-            console.log(character.name);
-            resolve();
-          });
-        });
-      });
-    }
-  });
-}).on('error', (err) => {
-  console.error(`Error: ${err.message}`);
+  // Fetch each character in the same order (asynchronous handling)
+  const fetchCharacter = (index) => {
+    if (index >= characters.length) return;
+
+    request(characters[index], (err, res, body) => {
+      if (!err) {
+        const character = JSON.parse(body);
+        console.log(character.name);
+        fetchCharacter(index + 1);
+      }
+    });
+  };
+
+  fetchCharacter(0);
 });
